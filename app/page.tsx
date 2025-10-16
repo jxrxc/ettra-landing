@@ -4,9 +4,9 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center text-center px-6" style={{ backgroundColor: '#3A1A4F' }}>
+    <div className="min-h-screen flex flex-col items-center text-center px-6" style={{ backgroundColor: '#3A1A4F' }}>
       {/* Logo */}
-      <div className="mb-12">
+      <div className="flex-1 flex items-center justify-center">
         <div className="relative responsive-logo">
           <Image
             src="/ettra-logo-md.png"
@@ -39,9 +39,9 @@ export default function Home() {
           <input 
             type="email" 
             placeholder="Enter your email"
-            className="px-6 py-4 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-[#FF5277] transition-colors bg-white"
+            className="px-6 py-4 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-[#FF5277] transition-colors bg-white text-center"
           />
-          <button className="bg-gradient-to-r from-[#FF5277] to-[#7B2CBF] text-white px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-all">
+          <button className="bg-gradient-to-r from-[#FF5277] to-[#7B2CBF] text-white px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-all text-4xl">
             Join Waitlist
           </button>
         </div>
