@@ -37,10 +37,10 @@ export default function Home() {
 
       {/* Main Text */}
       <div className="mb-8 max-w-2xl mx-auto">
-        <p className="text-[22px] leading-relaxed text-[#FFF8DC] mb-3">
+        <p className="text-[20px] leading-relaxed text-[#FF6B6B] mb-3">
           We&apos;re crafting the art and edge of selling beautifully.
         </p>
-        <p className="text-xl md:text-2xl leading-relaxed text-[#FF5277]">
+        <p className="text-xl md:text-2xl leading-relaxed text-[#FF6B6B]">
           Your listings. Cinematic. Branded. Effortless.
         </p>
       </div>
