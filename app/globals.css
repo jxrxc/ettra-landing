@@ -46,3 +46,23 @@ img {
   max-width: 100%;
   height: auto;
 }
+
+/* Responsive Logo Styling */
+@media (max-width: 640px) {
+  .responsive-logo {
+    transform: scale(0.7);
+    max-width: 100px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .responsive-logo {
+    transform: scale(1);
+  }
+}
+
+@media (min-width: 1025px) {
+  .responsive-logo {
+    transform: scale(1.1);
+  }
+}
