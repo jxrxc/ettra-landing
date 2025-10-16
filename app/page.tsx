@@ -37,7 +37,7 @@ export default function Home() {
 
       {/* Main Text */}
       <div className="mb-8 max-w-2xl mx-auto">
-        <p className="text-xl md:text-2xl leading-relaxed text-[#FF5277] mb-3">
+        <p className="text-[22px] leading-relaxed text-[#FFF8DC] mb-3">
           We&apos;re crafting the art and edge of selling beautifully.
         </p>
         <p className="text-xl md:text-2xl leading-relaxed text-[#FF5277]">
@@ -69,7 +69,7 @@ export default function Home() {
             <button 
               type="submit"
               disabled={isLoading}
-              className="bg-gradient-to-r from-[#FFF8DC] to-white text-[#3A1A4F] px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-all text-2xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-[#FF5277] to-[#7B2CBF] text-white px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-all text-2xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Joining...' : 'Join Our Pilot Program'}
             </button>
