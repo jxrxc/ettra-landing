@@ -4,9 +4,9 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center text-center px-6" style={{ backgroundColor: '#3A1A4F' }}>
+    <div className="min-h-screen flex flex-col justify-center items-center text-center px-6 py-16" style={{ backgroundColor: '#3A1A4F' }}>
       {/* Logo */}
-      <div className="mb-12">
+      <div className="mb-16">
         <div className="relative responsive-logo">
           <Image
             src="/ettra-logo-md.png"
@@ -21,8 +21,8 @@ export default function Home() {
       </div>
 
       {/* Main Text */}
-      <div className="mb-12 max-w-2xl mx-auto">
-        <p className="text-xl md:text-2xl leading-relaxed text-[#FF5277] mb-4">
+      <div className="mb-8 max-w-2xl mx-auto">
+        <p className="text-xl md:text-2xl leading-relaxed text-[#FF5277] mb-3">
           We&apos;re crafting the art and edge of selling beautifully.
         </p>
         <p className="text-xl md:text-2xl leading-relaxed text-[#FF5277]">
@@ -31,7 +31,7 @@ export default function Home() {
       </div>
 
       {/* Email Form */}
-      <div className="max-w-md mx-auto w-full mb-12">
+      <div className="max-w-md mx-auto w-full">
         <div className="flex flex-col gap-4">
           <input 
             type="email" 
