@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-8 pb-16" style={{ backgroundColor: '#3A1A4F' }}>
       {/* Logo */}
-      <div className="mb-16">
+      <div className="mb-20">
         <div className="relative responsive-logo">
           <Image
             src="/ettra-logo-md.png"
@@ -69,7 +69,7 @@ export default function Home() {
             <button 
               type="submit"
               disabled={isLoading}
-              className="bg-gradient-to-r from-[#FF5277] to-[#7B2CBF] text-white px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-all text-2xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-[#FFF8DC] to-white text-[#3A1A4F] px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-all text-2xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Joining...' : 'Join Our Pilot Program'}
             </button>
