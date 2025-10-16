@@ -19,7 +19,7 @@ export default function Home() {
     }, 1000);
   };
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center text-center px-6 py-16" style={{ backgroundColor: '#3A1A4F' }}>
+    <div className="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-8 pb-16" style={{ backgroundColor: '#3A1A4F' }}>
       {/* Logo */}
       <div className="mb-16">
         <div className="relative responsive-logo">
