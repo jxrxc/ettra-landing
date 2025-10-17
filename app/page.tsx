@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-8 pb-16" style={{ backgroundColor: '#3A1A4F' }}>
       {/* Logo */}
-      <div className="mb-20">
+      <div className="mb-12 md:mb-16 lg:mb-24">
         <div className="relative responsive-logo">
           <Image
             src="/ettra-logo-md.png"
