@@ -1,12 +1,15 @@
 "use client";
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 export default function Home() {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +41,7 @@ export default function Home() {
       {/* Main Text */}
       <div className="mb-8 max-w-2xl mx-auto">
         <p className="text-[20px] leading-relaxed text-[#FF6B6B] mb-3">
-          We&apos;re crafting the art and edge of selling beautifully.
+          Crafting the art & edge of selling beautifully.
         </p>
         <p className="text-xl md:text-2xl leading-relaxed text-[#FF6B6B]">
           Your listings. Cinematic. Branded. Effortless.
@@ -66,9 +69,18 @@ export default function Home() {
               required
               className="px-6 py-4 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-[#FF5277] transition-colors bg-white text-center"
             />
+            <div className="flex justify-center">
+              <HCaptcha
+                ref={captchaRef}
+                sitekey="10000000-ffff-ffff-ffff-000000000001"
+                onVerify={(token) => setCaptchaToken(token)}
+                onExpire={() => setCaptchaToken(null)}
+                onError={() => setCaptchaToken(null)}
+              />
+            </div>
             <button 
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !captchaToken}
               className="bg-gradient-to-r from-[#FF5277] to-[#7B2CBF] text-white px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-all text-2xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Joining...' : 'Join Our Pilot Program'}
