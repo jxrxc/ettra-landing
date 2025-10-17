@@ -75,7 +75,7 @@ export default function Home() {
         <p className="text-[20px] leading-relaxed text-[#FF6B6B] mb-3">
           Crafting the art & edge of selling beautifully.
         </p>
-        <p className="text-xl md:text-2xl leading-relaxed text-[#FF6B6B] font-bold">
+        <p className="text-[20px] leading-relaxed text-[#FF6B6B] font-bold">
           Your listings. Cinematic. Branded. Effortless.
         </p>
       </div>
