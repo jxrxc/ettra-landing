@@ -72,7 +72,7 @@ export default function Home() {
             <div className="flex justify-center">
               <HCaptcha
                 ref={captchaRef}
-                sitekey="10000000-ffff-ffff-ffff-000000000001"
+                sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY || "10000000-ffff-ffff-ffff-000000000001"}
                 onVerify={(token) => setCaptchaToken(token)}
                 onExpire={() => setCaptchaToken(null)}
                 onError={() => setCaptchaToken(null)}
