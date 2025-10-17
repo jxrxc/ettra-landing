@@ -36,24 +36,32 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify hCaptcha token
-    const captchaResponse = await fetch('https://hcaptcha.com/siteverify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        secret: process.env.HCAPTCHA_SECRET_KEY!,
-        response: captchaToken,
-      }),
-    });
-
-    const captchaResult = await captchaResponse.json();
+    const hcaptchaSecretKey = process.env.HCAPTCHA_SECRET_KEY;
     
-    if (!captchaResult.success) {
-      return NextResponse.json(
-        { error: 'Captcha verification failed' },
-        { status: 400 }
-      );
+    if (hcaptchaSecretKey) {
+      const captchaResponse = await fetch('https://hcaptcha.com/siteverify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          secret: hcaptchaSecretKey,
+          response: captchaToken,
+        }),
+      });
+
+      const captchaResult = await captchaResponse.json();
+      
+      if (!captchaResult.success) {
+        console.error('hCaptcha verification failed:', captchaResult);
+        return NextResponse.json(
+          { error: 'Captcha verification failed. Please try again.' },
+          { status: 400 }
+        );
+      }
+    } else {
+      console.warn('HCAPTCHA_SECRET_KEY not configured, skipping server-side verification');
+      // For development/testing, we'll allow it through if no secret key is configured
     }
 
     // Insert email into waitlist table
