@@ -73,7 +73,7 @@ export default function Home() {
       {/* Main Text */}
       <div className="mb-8 max-w-2xl mx-auto">
         <p className="text-[20px] leading-relaxed text-[#FF6B6B] mb-3">
-          Crafting the art & edge of selling beautifully.
+          Currently crafting the art & edge of selling beautifully.
         </p>
         <p className="text-xl md:text-2xl leading-relaxed text-[#FF6B6B]">
           Your listings. Cinematic. Branded. Effortless.
