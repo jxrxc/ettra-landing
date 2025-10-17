@@ -60,11 +60,11 @@ export default function Home() {
           <Image
             src="/ettra-logo-md.png"
             alt="Ettra Logo"
-            width={300}
-            height={100}
+            width={240}
+            height={80}
             priority
             className="transition-opacity duration-300"
-            sizes="(max-width: 640px) 120px, (max-width: 1024px) 180px, 300px"
+            sizes="(max-width: 640px) 120px, (max-width: 1024px) 180px, 240px"
           />
         </div>
       </div>

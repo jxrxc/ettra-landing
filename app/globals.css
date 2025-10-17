@@ -49,22 +49,25 @@ img {
 
 /* Responsive Logo Styling */
 @media (max-width: 640px) {
-  .responsive-logo {
-    transform: scale(0.7);
-    max-width: 150px;
+  .responsive-logo img {
+    width: 120px !important;
+    height: 40px !important;
+    max-width: 120px;
   }
 }
 
 @media (min-width: 641px) and (max-width: 1024px) {
-  .responsive-logo {
-    transform: scale(1);
+  .responsive-logo img {
+    width: 180px !important;
+    height: 60px !important;
     max-width: 180px;
   }
 }
 
 @media (min-width: 1025px) {
-  .responsive-logo {
-    transform: scale(1.1);
-    max-width: 330px;
+  .responsive-logo img {
+    width: 240px !important;
+    height: 80px !important;
+    max-width: 240px;
   }
 }
