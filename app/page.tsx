@@ -13,13 +13,44 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!captchaToken) {
+      alert('Please complete the hCaptcha verification.');
+      return;
+    }
+    
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitted(true);
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          captchaToken,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        setEmail(''); // Clear the form
+        setCaptchaToken(null); // Reset captcha
+        if (captchaRef.current) {
+          captchaRef.current.resetCaptcha();
+        }
+      } else {
+        alert(result.error || 'Failed to join waitlist. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Network error. Please check your connection and try again.');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
   return (
     <div className="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-8 pb-16" style={{ backgroundColor: '#3A1A4F' }}>
