@@ -65,6 +65,7 @@ export default function Home() {
             priority
             className="transition-opacity duration-300"
             sizes="(max-width: 640px) 120px, (max-width: 1024px) 180px, 240px"
+            style={{ width: 'auto', height: 'auto' }}
           />
         </div>
       </div>
