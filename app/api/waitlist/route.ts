@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import sgMail from '@sendgrid/mail';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 let supabase: SupabaseClient | null = null;
-
 if (supabaseUrl && supabaseServiceKey) {
   supabase = createClient(supabaseUrl, supabaseServiceKey);
 }
@@ -22,36 +22,18 @@ export async function POST(request: NextRequest) {
     }
 
     if (!email) {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    if (!captchaToken) {
-      return NextResponse.json(
-        { error: 'Captcha verification required' },
-        { status: 400 }
-      );
-    }
-
-    // Verify hCaptcha token
+    // hCaptcha verification (best-effort, skipped if no secret)
     const hcaptchaSecretKey = process.env.HCAPTCHA_SECRET_KEY;
-    
     if (hcaptchaSecretKey) {
       const captchaResponse = await fetch('https://hcaptcha.com/siteverify', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          secret: hcaptchaSecretKey,
-          response: captchaToken,
-        }),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ secret: hcaptchaSecretKey, response: captchaToken }),
       });
-
       const captchaResult = await captchaResponse.json();
-      
       if (!captchaResult.success) {
         console.error('hCaptcha verification failed:', captchaResult);
         return NextResponse.json(
@@ -61,47 +43,57 @@ export async function POST(request: NextRequest) {
       }
     } else {
       console.warn('HCAPTCHA_SECRET_KEY not configured, skipping server-side verification');
-      // For development/testing, we'll allow it through if no secret key is configured
     }
 
-    // Insert email into waitlist table
+    // Insert into waitlist (dedupe handled by unique index)
     const { data, error } = await supabase
       .from('waitlist')
-      .insert([
-        { 
-          email: email.toLowerCase().trim(),
-          created_at: new Date().toISOString()
-        }
-      ])
+      .insert([{ email: String(email).toLowerCase().trim(), created_at: new Date().toISOString() }])
       .select();
 
     if (error) {
       console.error('Supabase error:', error);
-      
-      // Handle duplicate email error
-      if (error.code === '23505') {
-        return NextResponse.json(
-          { error: 'Email already registered' },
-          { status: 409 }
-        );
+      if ((error as any).code === '23505') {
+        return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
       }
-      
-      return NextResponse.json(
-        { error: 'Failed to add email to waitlist' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to add email to waitlist' }, { status: 500 });
     }
 
-    return NextResponse.json(
-      { message: 'Successfully added to waitlist', data },
-      { status: 201 }
-    );
+    // Send confirmation email via SendGrid (best-effort)
+    try {
+      const sendgridApiKey = process.env.SENDGRID_API_KEY;
+      const fromEmail = process.env.SENDGRID_FROM_EMAIL;
+      if (sendgridApiKey && fromEmail) {
+        sgMail.setApiKey(sendgridApiKey);
+        const msg = {
+          to: email,
+          from: fromEmail,
+          subject: "You're on the Ettra pilot waitlist ✨",
+          text: "Thanks for joining the Ettra pilot. We'll be in touch soon with early access.",
+          html: '<p>Thanks for joining the Ettra pilot. We\'ll be in touch soon with early access.</p>',
+          categories: ['waitlist', 'pilot'],
+        } as const;
+        const res = await sgMail.send(msg);
+        console.log('[SendGrid] Mail sent', {
+          statusCode: res?.[0]?.statusCode,
+          requestId: res?.[0]?.headers?.['x-message-id'] || res?.[0]?.headers?.['x-request-id'],
+        });
+      } else {
+        console.warn('[SendGrid] Missing SENDGRID_API_KEY or SENDGRID_FROM_EMAIL; skipping email');
+      }
+    } catch (emailErr: any) {
+      console.warn('[SendGrid] Failed to send confirmation', {
+        message: emailErr?.message,
+        code: emailErr?.code,
+        body: emailErr?.response?.body,
+      });
+    }
 
-  } catch (error) {
-    console.error('API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Successfully added to waitlist', data }, { status: 201 });
+  } catch (err) {
+    console.error('API error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+
