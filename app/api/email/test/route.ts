@@ -1,20 +1,20 @@
 import { NextResponse } from 'next/server';
-import sgMail from '@sendgrid/mail';
 
-const apiKey = process.env.SENDGRID_API_KEY;
-if (apiKey) {
-  sgMail.setApiKey(apiKey);
-}
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   return NextResponse.json({ ok: true, message: 'Email test endpoint ready. Use POST to send.' }, { status: 200 });
 }
 
 export async function POST() {
+  const apiKey = process.env.SENDGRID_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: 'Missing SENDGRID_API_KEY' }, { status: 500 });
   }
   try {
+    const { default: sgMail } = await import('@sendgrid/mail');
+    sgMail.setApiKey(apiKey);
     const res = await sgMail.send({
       to: 'josericardo.cm@icloud.com',
       from: 'hello@ettra.ai',
