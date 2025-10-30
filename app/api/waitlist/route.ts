@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import sgMail from '@sendgrid/mail';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -64,6 +66,7 @@ export async function POST(request: NextRequest) {
       const sendgridApiKey = process.env.SENDGRID_API_KEY;
       const fromEmail = process.env.SENDGRID_FROM_EMAIL;
       if (sendgridApiKey && fromEmail) {
+        const { default: sgMail } = await import('@sendgrid/mail');
         sgMail.setApiKey(sendgridApiKey);
         const msg = {
           to: email,
