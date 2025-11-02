@@ -55,7 +55,8 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Supabase error:', error);
-      if ((error as any).code === '23505') {
+      const pgErr = error as { code?: string };
+      if (pgErr?.code === '23505') {
         return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
       }
       return NextResponse.json({ error: 'Failed to add email to waitlist' }, { status: 500 });
@@ -74,8 +75,8 @@ export async function POST(request: NextRequest) {
           subject: "You're on the Ettra pilot waitlist ✨",
           text: "Thanks for joining the Ettra pilot. We'll be in touch soon with early access.",
           html: '<p>Thanks for joining the Ettra pilot. We\'ll be in touch soon with early access.</p>',
-          categories: ['waitlist', 'pilot'],
-        } as const;
+          categories: ['waitlist', 'pilot'] as string[],
+        };
         const res = await sgMail.send(msg);
         console.log('[SendGrid] Mail sent', {
           statusCode: res?.[0]?.statusCode,
@@ -84,16 +85,17 @@ export async function POST(request: NextRequest) {
       } else {
         console.warn('[SendGrid] Missing SENDGRID_API_KEY or SENDGRID_FROM_EMAIL; skipping email');
       }
-    } catch (emailErr: any) {
+    } catch (emailErr: unknown) {
+      const e = emailErr as { message?: string; code?: string; response?: { body?: unknown } };
       console.warn('[SendGrid] Failed to send confirmation', {
-        message: emailErr?.message,
-        code: emailErr?.code,
-        body: emailErr?.response?.body,
+        message: e?.message,
+        code: e?.code,
+        body: e?.response?.body,
       });
     }
 
     return NextResponse.json({ message: 'Successfully added to waitlist', data }, { status: 201 });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('API error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

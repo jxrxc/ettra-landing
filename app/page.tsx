@@ -120,6 +120,14 @@ export default function Home() {
           </form>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="text-sm text-center text-gray-300 mt-12">
+        <a href="/privacy" className="mx-2 hover:underline">Privacy</a>•
+        <a href="/terms" className="mx-2 hover:underline">Terms</a>•
+        <a href="mailto:hello@ettra.ai" className="mx-2 hover:underline">Contact</a>
+        <p className="mt-3 text-xs text-gray-500">© 2025 Ettra.ai · Crafted with care.</p>
+      </footer>
     </div>
   );
 }

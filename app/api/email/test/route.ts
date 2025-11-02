@@ -23,8 +23,9 @@ export async function POST() {
       html: '<strong>and easy to do anywhere, even with Node.js</strong>',
     });
     return NextResponse.json({ ok: true, statusCode: res?.[0]?.statusCode }, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ ok: false, message: error?.message, body: error?.response?.body }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as { message?: string; response?: { body?: unknown } };
+    return NextResponse.json({ ok: false, message: err?.message, body: err?.response?.body }, { status: 500 });
   }
 }
 
