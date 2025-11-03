@@ -53,7 +53,7 @@ export default function Home() {
     }
   };
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-8 pb-16" style={{ backgroundColor: '#3A1A4F' }}>
+    <div className="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-8 pb-16 bg-gradient-to-br from-[#140025] via-[#22003F] to-[#3A015C] text-[#F6EDE9]">
       {/* Logo */}
       <div className="mb-12 md:mb-16 lg:mb-24">
         <div className="relative responsive-logo">
@@ -72,10 +72,10 @@ export default function Home() {
 
       {/* Main Text */}
       <div className="mb-8 max-w-2xl mx-auto">
-        <p className="text-[20px] leading-relaxed text-[#FF6B6B] mb-3">
+        <p className="text-[20px] leading-relaxed text-[#F6EDE9] mb-3">
           Crafting the art & edge of selling beautifully.
         </p>
-        <p className="text-[18px] md:text-[20px] leading-relaxed text-[#FF6B6B] font-bold">
+        <p className="text-[18px] md:text-[20px] leading-relaxed text-[#F6EDE9] font-bold">
           Your listings. Cinematic. Branded. Effortless.
         </p>
       </div>
@@ -84,10 +84,10 @@ export default function Home() {
       <div className="max-w-md mx-auto w-full">
         {isSubmitted ? (
           <div className="text-center">
-            <div className="text-2xl md:text-3xl font-semibold text-[#FF5277] mb-4">
+            <div className="text-2xl md:text-3xl font-semibold text-[#F6EDE9] mb-4">
               Welcome to our Pilot Program! 🎉
             </div>
-            <p className="text-lg text-[#FF5277] opacity-90">
+            <p className="text-lg text-[#F6EDE9] opacity-90">
               We&apos;ll be in touch soon with exclusive updates and early access.
             </p>
           </div>
@@ -122,11 +122,11 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="text-sm text-center text-gray-300 mt-12">
+      <footer className="text-sm text-center text-[#F6EDE9] mt-12">
         <a href="/privacy" className="mx-2 hover:underline">Privacy</a>•
         <a href="/terms" className="mx-2 hover:underline">Terms</a>•
         <a href="mailto:hello@ettra.ai" className="mx-2 hover:underline">Contact</a>
-        <p className="mt-3 text-xs text-gray-500">© 2025 Ettra.ai · Crafted with care.</p>
+        <p className="mt-3 text-xs text-[#F6EDE9] opacity-70">© 2025 Ettra.ai · Crafted with care.</p>
       </footer>
     </div>
   );
