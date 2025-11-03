@@ -100,7 +100,7 @@ export default function Home() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="px-6 py-4 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-[#FF5277] transition-colors bg-white text-center"
-              style={{ color: '#008080' }}
+              style={{ color: '#008080', fontWeight: 'bold' }}
             />
             <div className="flex justify-center">
               <HCaptcha
