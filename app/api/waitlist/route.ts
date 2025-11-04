@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { checkRateLimit, getSecurityHeaders, isSuspiciousIP, getClientIP, logSecurityEvent } from '@/lib/security';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,18 +14,59 @@ if (supabaseUrl && supabaseServiceKey) {
 }
 
 export async function POST(request: NextRequest) {
+  const endpoint = '/api/waitlist';
+  const ip = getClientIP(request);
+  const securityHeaders = getSecurityHeaders();
+  
+  // Check for suspicious IP
+  if (isSuspiciousIP(ip)) {
+    await logSecurityEvent({
+      type: 'suspicious_activity',
+      endpoint,
+      ip: ip || undefined,
+      userAgent: request.headers.get('user-agent') || undefined,
+      details: { reason: 'suspicious_ip' },
+      timestamp: new Date(),
+    });
+    return NextResponse.json(
+      { error: 'Invalid request' },
+      { status: 400, headers: securityHeaders }
+    );
+  }
+  
+  // Check rate limit
+  const rateLimitResult = checkRateLimit(endpoint, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: 'Too many requests. Please try again later.',
+        retryAfter: rateLimitResult.retryAfter,
+      },
+      { 
+        status: 429,
+        headers: {
+          ...securityHeaders,
+          'Retry-After': rateLimitResult.retryAfter?.toString() || '60',
+        },
+      }
+    );
+  }
+  
   try {
     const { email, captchaToken } = await request.json();
 
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database not configured. Please contact support.' },
-        { status: 503 }
+        { status: 503, headers: securityHeaders }
       );
     }
 
     if (!email) {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Email is required' },
+        { status: 400, headers: securityHeaders }
+      );
     }
 
     // hCaptcha verification (best-effort, skipped if no secret)
@@ -38,9 +80,17 @@ export async function POST(request: NextRequest) {
       const captchaResult = await captchaResponse.json();
       if (!captchaResult.success) {
         console.error('hCaptcha verification failed:', captchaResult);
+        await logSecurityEvent({
+          type: 'failed_authentication',
+          endpoint,
+          ip: ip || undefined,
+          userAgent: request.headers.get('user-agent') || undefined,
+          details: { reason: 'captcha_failed' },
+          timestamp: new Date(),
+        });
         return NextResponse.json(
           { error: 'Captcha verification failed. Please try again.' },
-          { status: 400 }
+          { status: 400, headers: securityHeaders }
         );
       }
     } else {
@@ -57,9 +107,15 @@ export async function POST(request: NextRequest) {
       console.error('Supabase error:', error);
       const pgErr = error as { code?: string };
       if (pgErr?.code === '23505') {
-        return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
+        return NextResponse.json(
+          { error: 'Email already registered' },
+          { status: 409, headers: securityHeaders }
+        );
       }
-      return NextResponse.json({ error: 'Failed to add email to waitlist' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to add email to waitlist' },
+        { status: 500, headers: securityHeaders }
+      );
     }
 
     // Send confirmation email via SendGrid (best-effort)
@@ -94,10 +150,24 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({ message: 'Successfully added to waitlist', data }, { status: 201 });
+    return NextResponse.json(
+      { message: 'Successfully added to waitlist', data },
+      { status: 201, headers: securityHeaders }
+    );
   } catch (err: unknown) {
     console.error('API error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    await logSecurityEvent({
+      type: 'invalid_request',
+      endpoint,
+      ip: ip || undefined,
+      userAgent: request.headers.get('user-agent') || undefined,
+      details: { error: err instanceof Error ? err.message : 'unknown' },
+      timestamp: new Date(),
+    });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500, headers: securityHeaders }
+    );
   }
 }
 
